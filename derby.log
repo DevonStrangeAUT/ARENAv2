@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Wed Oct 15 13:45:13 NZDT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0199-e554-07bd-00001e706380 
+Wed Oct 15 15:21:13 NZDT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0199-e5ab-ebfa-00001e706290 
 on database directory C:\Users\hipst\OneDrive - AUT University\AUT 2025\S2\COMP603 - Program Design and Construction\ARENAv2\arenaDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@3f99bd52 
 Loaded from file:/C:/Users/hipst/OneDrive%20-%20AUT%20University/AUT%202025/S2/COMP603%20-%20Program%20Design%20and%20Construction/ARENAv2/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=21.0.2+13-LTS-58
-user.dir=C:\Users\Fynn\Documents\NetBeansProjects\ARENAv2
+java.runtime.version=21.0.6+8-LTS-188
+user.dir=C:\Users\hipst\OneDrive - AUT University\AUT 2025\S2\COMP603 - Program Design and Construction\ARENAv2
 os.name=Windows 10
 os.arch=amd64
 os.version=10.0
