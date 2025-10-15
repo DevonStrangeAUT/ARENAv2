@@ -66,4 +66,32 @@ public class Inventory {
         }
         return items.remove(index);
     }
+
+    // ========== v2 GUI HELPER METHODS =========
+    
+    /**
+     * Returns a list of all items stored in the inventory (used by the GUI to
+     * fetch and display).
+     *
+     * @return item list
+     */
+    public List<Item> getItems() {
+        return new ArrayList<>(items);
+    }
+
+    /**
+     * Fetches an item using its name.
+     *
+     * @param name item name
+     * @return matching item or null (if not found or out of bounds)
+     */
+    public Item getItemByName(String name) {
+        for (Item item : items) {
+            if (item.getName().equalsIgnoreCase(name)) {
+                items.remove(item); // remove item as valid target once used
+                return item;
+            }
+        }
+        return null;
+    }
 }
