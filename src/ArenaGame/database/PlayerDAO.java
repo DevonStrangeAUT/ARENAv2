@@ -59,7 +59,7 @@ public class PlayerDAO {
             System.out.println("Player: " + name + " successfully added to database.");
         } catch (SQLException exception) {
             if ("23505".equals(exception.getSQLState())) {
-                System.out.println("Pkayer already present in database.");
+                System.out.println("Player already present in database.");
             } else {
                 System.err.println("Error adding player to database: " + exception.getMessage());
             }
