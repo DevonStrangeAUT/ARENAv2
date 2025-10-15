@@ -95,6 +95,9 @@ public class BattleFrame extends JFrame {
                 ? playerGladiator.getAttack() - enemyGladiator.getDefense() : 1;
         enemyGladiator.setHealth(Math.max(0, enemyGladiator.getHealth() - damage));
         appendLog("You hit " + enemyGladiator.getName() + " for " + damage + " damage.\n");
+        battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "ATTACK");
+        
+        playerGladiator.setBlocking(false);
         updateStats();
         checkBattleOutcome();
         enemyTurn();
@@ -103,6 +106,7 @@ public class BattleFrame extends JFrame {
     private void guardAction(ActionEvent event) {
         playerGladiator.setBlocking(true);
         appendLog("You brace yourself for the next attack.\n");
+        battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "GUARD");
         enemyTurn();
     }
 
@@ -132,30 +136,59 @@ public class BattleFrame extends JFrame {
 
     private void tauntAction(ActionEvent event) {
         appendLog("You taunt " + enemyGladiator.getName() + ".\n");
-        if (new Random().nextInt(10) > 4) {
-            appendLog("Your taunt disrupts " + enemyGladiator.getName() + "'s ability to focus!\n");
+        if (new Random().nextInt(10) >= 3) { 
+            int attackDebuff = (int) (enemyGladiator.getAttack() * 0.2);
+            int defenseDebuff = (int) (enemyGladiator.getDefense() * 0.2);
+            enemyGladiator.setAttack(Math.max(1, enemyGladiator.getAttack() - attackDebuff));
+            enemyGladiator.setDefense(Math.max(0, enemyGladiator.getDefense() - defenseDebuff));
+            appendLog(enemyGladiator.getName() + " loses -" + attackDebuff + " ATK and -" + defenseDebuff + " DEF permanently!\n");
+            battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "TAUNT SUCCESS");
+        } else {
+            appendLog(enemyGladiator.getName() + " ignores your taunt!\n");
+            battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "TAUNT FAIL");
         }
+        updateStats();
         enemyTurn();
     }
 
     private void enemyTurn() {
-        if (!enemyGladiator.isAlive()) {
-            return;
-        }
+        if (!enemyGladiator.isAlive()) return;
 
         int action = new Random().nextInt(3);
         switch (action) {
-            case 0 -> {
-                int damage = playerGladiator.isBlocking() ? enemyGladiator.getAttack() / 2 : enemyGladiator.getAttack();
+            case 0 -> { // Attack
+                int damage = playerGladiator.isBlocking()
+                        ? Math.max(1, enemyGladiator.getAttack() / 2)
+                        : enemyGladiator.getAttack();
+
                 playerGladiator.setHealth(Math.max(0, playerGladiator.getHealth() - damage));
                 appendLog(enemyGladiator.getName() + " hits you for " + damage + " damage!\n");
                 playerGladiator.setBlocking(false);
+                battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "ATTACK");
             }
-            case 1 ->
-                appendLog(enemyGladiator.getName() + " prepares to guard your next attack.\n");
-            case 2 ->
-                appendLog(enemyGladiator.getName() + " watches you nervously.\n");
+
+            case 1 -> { // Guard
+                enemyGladiator.setBlocking(true);
+                appendLog(enemyGladiator.getName() + " braces for the next incoming attack.\n");
+                battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "GUARD");
+            }
+
+            case 2 -> { // Taunt (debuffs player)
+                appendLog(enemyGladiator.getName() + " taunts you! \n");
+                if (new Random().nextInt(10) >= 3) {
+                    int atkLoss = (int) (playerGladiator.getAttack() * 0.2);
+                    int defLoss = (int) (playerGladiator.getDefense() * 0.2);
+                    playerGladiator.setAttack(Math.max(1, playerGladiator.getAttack() - atkLoss));
+                    playerGladiator.setDefense(Math.max(0, playerGladiator.getDefense() - defLoss));
+                    appendLog("You lose -" + atkLoss + " ATK and -" + defLoss + " DEF permanently!\n");
+                    battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "TAUNT SUCCESS");
+                } else {
+                    appendLog("You shrug off the insult.\n");
+                    battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "TAUNT FAIL");
+                }
+            }
         }
+
         updateStats();
         checkBattleOutcome();
     }
