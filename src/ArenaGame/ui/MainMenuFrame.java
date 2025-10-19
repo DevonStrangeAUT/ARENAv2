@@ -9,16 +9,24 @@ import java.awt.event.ActionEvent;
  * MainMenuFrame is the J Frame based main GUI - this class replaces the CUI
  * handling "GameMenu" class from v1
  *
- * Responsibilities: - Display main menu selections - Handle user inputs via GUI
- * elements - Connect to DAO (data access object) classes when data operations
- * needed
+ * Responsibilities: 
+ * - Display main menu selections 
+ * - Handle user inputs via GUI elements 
+ * - Connect to DAO (data access object) classes when data operations needed
+ * 
  */
 public class MainMenuFrame extends JFrame {
 
+    // Database objects
     private final PlayerDAO playerDAO;
     private final GladiatorDAO gladiatorDAO;
     private final BattleLogDAO battleLogDAO;
 
+    /**
+     * Builds main menu frame and initializes components.
+     * Setup DAO instances so values can be accessed
+     * 
+     */
     public MainMenuFrame() {
         // default constructor initialization of DAOs
         this.playerDAO = new PlayerDAO();
@@ -31,7 +39,7 @@ public class MainMenuFrame extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
 
-        initElements();
+        initElements(); // initalize frame elements after frame built
     }
 
     /**
@@ -76,14 +84,19 @@ public class MainMenuFrame extends JFrame {
     }
 
     // ========= LISTENER METHODS =========
+     /**
+     * Launches a new battle window
+     * Creates a player record if needed and passes their name to the battle
+     * 
+     */
     private void enterBattle(ActionEvent event) {
         String playerName = JOptionPane.showInputDialog(this, "Enter the name of your gladiator: ");
-        if (playerName == null || playerName.isBlank()) {
+        if (playerName == null || playerName.isBlank()) { // if invalid or blank take player back to entry
             JOptionPane.showMessageDialog(this, "Please enter a valid name!");
             return;
         }
 
-        if (playerDAO.playerExists(playerName)) {
+        if (playerDAO.playerExists(playerName)) { // if player exists continue with data
             int choice = JOptionPane.showConfirmDialog(this,
                     "A gladiator named '" + playerName + "' already exists. Continue?",
                     "Existing Player",
@@ -93,15 +106,21 @@ public class MainMenuFrame extends JFrame {
                 return;
             }
         } else {
-            playerDAO.addPlayer(playerName);
+            playerDAO.addPlayer(playerName); // if player doesnt exist add to DB
         }
 
         dispose(); // close the menu
-        new BattleFrame(playerName);
+        new BattleFrame(playerName); // launch battle
     }
 
+     /**
+     * Displays all player names and scores stored in the database
+     * in a pop up window
+     * 
+     */
     private void viewScores(ActionEvent event) {
-        var scores = playerDAO.getAllPlayers();
+        var scores = playerDAO.getAllPlayers(); // fetch scores from DB
+        
         if (scores.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Failed to find scores.");
         } else {
@@ -112,9 +131,14 @@ public class MainMenuFrame extends JFrame {
         }
     }
 
+     /**
+     * Opens a scrollable window showing the recorded 
+     * battle logs, time stamps and appends
+     */
     private void viewLogs(ActionEvent event) {
         var logs = battleLogDAO.getLogs();
-        if (logs.isEmpty()) {
+        
+        if (logs.isEmpty()) { // if no logs found
             JOptionPane.showMessageDialog(this, "Failed to find logs.");
         } else {
             JTextArea textArea = new JTextArea();
@@ -126,6 +150,11 @@ public class MainMenuFrame extends JFrame {
         }
     }
 
+    /**
+     * Clear scores in database, show a confirmation
+     * to prevent player from accidentally clearing
+     * 
+     */
     private void resetScores(ActionEvent event) {
         int userChoice = JOptionPane.showConfirmDialog(this,
                 "Are you sure you want to reset all player scores?",
@@ -139,6 +168,11 @@ public class MainMenuFrame extends JFrame {
         }
     }
 
+    /**
+     * Clear logs from database, show a confirmation
+     * to prevent player from accidentally clearing
+     * 
+     */
     private void resetLogs(ActionEvent event) {
         int userChoice = JOptionPane.showConfirmDialog(this,
                 "Are you sure you want to reset all database logs?",
@@ -152,6 +186,11 @@ public class MainMenuFrame extends JFrame {
         }
     }
 
+    /**
+     * Reset gladiators to defaults, show a confirmation
+     * to prevent players from accidentally resetting
+     * 
+     */
     private void resetGladiators(ActionEvent event) {
         int userChoice = JOptionPane.showConfirmDialog(this,
                 "Are you sure you want to reset gladiators to default?",
@@ -166,6 +205,11 @@ public class MainMenuFrame extends JFrame {
     }
 
     // ========== JFRAME LAUNCHER ==========
+    /**
+     * Launch main menu frame call this 
+     * method on game start
+     * 
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new MainMenuFrame().setVisible(true);

@@ -6,12 +6,12 @@ import java.sql.SQLException;
 
 /**
  * The DatabaseManager class handles the connection and management of an
- * embedded database.
+ * embedded database
  *
- * Responsibilities: - Create and manage the connection to the database - Create
- * a database if one doesn't exist (and let the user know) - Provide methods for
- * closing or altering the database connection
- *
+ * Responsibilities: 
+ * - Create and manage the connection to the database 
+ * - Create a database if one doesn't exist (and let the user know) 
+ * - Provide methods for closing or altering the database connection
  */
 public class DatabaseManager {
 
@@ -25,7 +25,7 @@ public class DatabaseManager {
 
     /**
      * Private constructor method to prevent direct instantiation. Creates the
-     * connection when the instance is initialized.
+     * connection when the instance is initialized
      */
     private DatabaseManager() {
 
@@ -54,9 +54,9 @@ public class DatabaseManager {
     }
 
     /**
-     * Returns the current active connection object.
+     * Returns the current active connection object
      *
-     * @return active JDBC connection.
+     * @return active JDBC connection
      */
     public Connection getConnection() {
         return connection;

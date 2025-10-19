@@ -7,8 +7,10 @@ import java.util.*;
  * BattleLogDAO handles and parses all battle log operations. (In v2 txt/log
  * files are a legacy feature and data is stored in a DB)
  *
- * Responsibilities: - Create the BATTLE_LOGS table if one is not present -
- * Insert and append entries - Retrieve and clear table on request
+ * Responsibilities: 
+ * - Create the BATTLE_LOGS table if one is not present 
+ * - Insert and append entries 
+ * - Retrieve and clear table on request
  */
 public class BattleLogDAO {
 

@@ -5,11 +5,13 @@ import java.util.*;
 
 /**
  * PlayerDAO (direct access object) manages all database methods and functions
- * related to player data.
+ * related to player data
  *
- * Responsibilities: - Create PLAYERS table in arenaDB if one does not exist -
- * Insert new players into the table - Retrieve and update player scores as
- * needed - Fetch player records when requested
+ * Responsibilities: 
+ * - Create PLAYERS table in arenaDB if one does not exist 
+ * - Insert new players into the table 
+ * - Retrieve and update player scores as needed 
+ * - Fetch player records when requested
  */
 public class PlayerDAO {
 
@@ -17,7 +19,7 @@ public class PlayerDAO {
 
     /**
      * A Constructor method that initializes database connection and checks
-     * tables exist in DB.
+     * tables exist in DB
      */
     public PlayerDAO() {
         this.connection = DatabaseManager.getInstance().getConnection();
@@ -25,7 +27,7 @@ public class PlayerDAO {
     }
 
     /**
-     * Create PLAYERS table if no table exists.
+     * Create PLAYERS table if no table exists
      */
     private void noTable() {
         String sql = """
@@ -137,7 +139,7 @@ public class PlayerDAO {
     }
 
     /**
-     * Retrieves players and their scores.
+     * Retrieves players and their scores
      *
      * @return Map of player names and scores
      */

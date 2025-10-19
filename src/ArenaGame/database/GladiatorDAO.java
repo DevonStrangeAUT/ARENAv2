@@ -6,18 +6,20 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * GladiatorDAO handles database changes for enemy gladiators.
+ * GladiatorDAO handles database changes for enemy gladiators
  *
- * Responsibilities: - Create and manage GLADIATORS table - Add and retrieve
- * records - Initialize default GLADIATORS table if it is not present
+ * Responsibilities: 
+ * - Create and manage GLADIATORS table 
+ * - Add and retrieve records 
+ * - Initialize default GLADIATORS table if it is not present
  */
 public class GladiatorDAO {
 
     private final Connection connection;
 
     /**
-     * Constructor method initializes connection and ensures GLADIATORS table
-     * exists.
+     * Constructor method initializes connection and ensures 
+     * GLADIATORS table exists
      */
     public GladiatorDAO() {
         this.connection = DatabaseManager.getInstance().getConnection();
@@ -26,7 +28,7 @@ public class GladiatorDAO {
     }
 
     /**
-     * Creates the GLADIATORS table if it is not detected on run.
+     * Creates the GLADIATORS table if it is not detected on run
      */
     private void noTable() {
         String sql = """
@@ -51,7 +53,7 @@ public class GladiatorDAO {
 
     // ========== WRITE METHODS ==========
     /**
-     * Adds a gladiator to the database.
+     * Adds a gladiator to the database
      */
     public void addGladiator(String name, int health, int maxHealth, int attack, int defense) {
         String sql = "INSERT INTO GLADIATORS (NAME, HEALTH, MAX_HEALTH, ATTACK, DEFENSE) VALUES (?, ?, ?, ?, ?)";
@@ -73,7 +75,7 @@ public class GladiatorDAO {
     }
 
     /**
-     * Updates a gladiator's stats.
+     * Updates a gladiator's stats
      */
     public void updateGladiator(String name, int health, int attack, int defense) {
         String sql = "UPDATE GLADIATORS SET HEALTH=?, ATTACK=?, DEFENSE=?, WHERE NAME=?";
@@ -90,7 +92,7 @@ public class GladiatorDAO {
     }
 
     /**
-     * Deletes gladiators from table.
+     * Deletes gladiators from table
      */
     public void resetGladiators() {
         String sql = "DELETE FROM GLADIATORS";
@@ -105,7 +107,7 @@ public class GladiatorDAO {
 
     // ========== READ METHODS ==========
     /**
-     * Returns all gladiators as EnemyGladiator objects.
+     * Returns all gladiators as EnemyGladiator objects
      */
     public List<Gladiator> getAllGladiators() {
         List<Gladiator> gladiators = new ArrayList<>();
@@ -128,7 +130,7 @@ public class GladiatorDAO {
     }
 
     /**
-     * Retrieves a random gladiator from the database.
+     * Retrieves a random gladiator from the database
      */
     public Gladiator getRandomGladiator() {
         List<Gladiator> all = getAllGladiators();
@@ -139,7 +141,7 @@ public class GladiatorDAO {
     }
 
     /**
-     * Ensure default gladiators exist.
+     * Ensure default gladiators exist
      */
     private void initializeDefaults() {
         if (getAllGladiators().isEmpty()) {
