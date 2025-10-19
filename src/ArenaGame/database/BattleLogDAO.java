@@ -105,7 +105,7 @@ public class BattleLogDAO {
     }
 
     /**
-     * Counts num stored battle logs.
+     * Counts num of stored battle logs.
      *
      * @return number of logs present in table
      */

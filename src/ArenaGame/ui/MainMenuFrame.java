@@ -27,7 +27,7 @@ public class MainMenuFrame extends JFrame {
 
         setTitle("ARENAv2 - Main Menu Frame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 500);
+        setSize(600, 800);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -39,8 +39,8 @@ public class MainMenuFrame extends JFrame {
      */
     private void initElements() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(8, 1, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        panel.setLayout(new GridLayout(9, 1, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         JLabel title = new JLabel(" ARENAv2 ", SwingConstants.CENTER);
         title.setFont(new Font("Serif", Font.BOLD, 24));
@@ -82,10 +82,22 @@ public class MainMenuFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Please enter a valid name!");
             return;
         }
-        
-        PlayerDAO dao = new PlayerDAO();
-        dao.addPlayer(playerName);
-        new BattleFrame(playerName);     
+
+        if (playerDAO.playerExists(playerName)) {
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "A gladiator named '" + playerName + "' already exists. Continue?",
+                    "Existing Player",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+        } else {
+            playerDAO.addPlayer(playerName);
+        }
+
+        dispose(); // close the menu
+        new BattleFrame(playerName);
     }
 
     private void viewScores(ActionEvent event) {
@@ -115,27 +127,49 @@ public class MainMenuFrame extends JFrame {
     }
 
     private void resetScores(ActionEvent event) {
-        playerDAO.resetScores();
-        JOptionPane.showMessageDialog(this, "Scores successfully cleared.");
+        int userChoice = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to reset all player scores?",
+                "Warning: This action cannot be undone!",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (userChoice == JOptionPane.YES_OPTION) {
+            playerDAO.resetScores();
+            JOptionPane.showMessageDialog(this, "Successfully cleared stored scores.");
+        }
     }
 
     private void resetLogs(ActionEvent event) {
-        battleLogDAO.clearLogs();
-        JOptionPane.showMessageDialog(this, "Logs successfully cleared.");
+        int userChoice = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to reset all database logs?",
+                "Warning: This action cannot be undone!",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (userChoice == JOptionPane.YES_OPTION) {
+            battleLogDAO.clearLogs();
+            JOptionPane.showMessageDialog(this, "Successfully cleared stored logs.");
+        }
     }
 
     private void resetGladiators(ActionEvent event) {
-        gladiatorDAO.resetGladiators();
-        JOptionPane.showMessageDialog(this, "Gladiators successfully reset.");
+        int userChoice = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to reset gladiators to default?",
+                "Warning: This action cannot be undone!",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (userChoice == JOptionPane.YES_OPTION) {
+            gladiatorDAO.resetGladiators();
+            JOptionPane.showMessageDialog(this, "Successfully reset gladiators to default.");
+        }
     }
 
     // ========== JFRAME LAUNCHER ==========
-    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new MainMenuFrame().setVisible(true);
         });
     }
-    
 
 }

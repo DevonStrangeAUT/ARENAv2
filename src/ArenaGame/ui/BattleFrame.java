@@ -18,8 +18,8 @@ public class BattleFrame extends JFrame {
     private final GladiatorDAO gladiatorDAO;
     private final BattleLogDAO battleLogDAO;
 
-    private PlayerGladiator playerGladiator;
-    private Gladiator enemyGladiator;
+    private final PlayerGladiator playerGladiator;
+    private final Gladiator enemyGladiator;
     private final JTextArea battleLogArea;
     private final JLabel playerStats;
     private final JLabel enemyStats;
@@ -27,13 +27,15 @@ public class BattleFrame extends JFrame {
 
     /**
      * Create a new BattleFrame fetching data from the DAOs
+     *
+     * @param playerName
      */
     public BattleFrame(String playerName) {
         this.playerDAO = new PlayerDAO();
         this.gladiatorDAO = new GladiatorDAO();
         this.battleLogDAO = new BattleLogDAO();
 
-        this.playerGladiator = new PlayerGladiator(playerName, 100, 100, 30, 5, new java.util.Scanner(System.in));
+        this.playerGladiator = new PlayerGladiator(playerName, 120, 120, 35, 10, new java.util.Scanner(System.in));
         this.enemyGladiator = gladiatorDAO.getRandomGladiator();
 
         setTitle("ARENAv2 - Battle");
@@ -72,7 +74,18 @@ public class BattleFrame extends JFrame {
         buttonGuard.addActionListener(this::guardAction);
         buttonUseItem.addActionListener(this::itemAction);
         buttonTaunt.addActionListener(this::tauntAction);
-        buttonExit.addActionListener(event -> dispose());
+        buttonExit.addActionListener(event -> {
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to leave the ARENA?",
+                    "Exit Battle",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                dispose();
+                new MainMenuFrame().setVisible(true); // battle frame -> menu
+            }
+        });
 
         buttonPanel.add(buttonAttack);
         buttonPanel.add(buttonGuard);
@@ -93,10 +106,14 @@ public class BattleFrame extends JFrame {
     private void attackAction(ActionEvent event) {
         int damage = enemyGladiator.getDefense() < playerGladiator.getAttack()
                 ? playerGladiator.getAttack() - enemyGladiator.getDefense() : 1;
+        if (enemyGladiator.isBlocking()) {
+            damage /= 2;
+            enemyGladiator.setBlocking(false);
+        }
         enemyGladiator.setHealth(Math.max(0, enemyGladiator.getHealth() - damage));
         appendLog("You hit " + enemyGladiator.getName() + " for " + damage + " damage.\n");
         battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "ATTACK");
-        
+
         playerGladiator.setBlocking(false);
         updateStats();
         checkBattleOutcome();
@@ -135,8 +152,8 @@ public class BattleFrame extends JFrame {
     }
 
     private void tauntAction(ActionEvent event) {
-        appendLog("You taunt " + enemyGladiator.getName() + ".\n");
-        if (new Random().nextInt(10) >= 3) { 
+        appendLog("You taunt " + enemyGladiator.getName() + "!\n");
+        if (new Random().nextInt(10) >= 3) {
             int attackDebuff = (int) (enemyGladiator.getAttack() * 0.2);
             int defenseDebuff = (int) (enemyGladiator.getDefense() * 0.2);
             enemyGladiator.setAttack(Math.max(1, enemyGladiator.getAttack() - attackDebuff));
@@ -144,7 +161,7 @@ public class BattleFrame extends JFrame {
             appendLog(enemyGladiator.getName() + " loses -" + attackDebuff + " ATK and -" + defenseDebuff + " DEF permanently!\n");
             battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "TAUNT SUCCESS");
         } else {
-            appendLog(enemyGladiator.getName() + " ignores your taunt!\n");
+            appendLog(enemyGladiator.getName() + " shrugs off your taunt!\n");
             battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "TAUNT FAIL");
         }
         updateStats();
@@ -152,9 +169,20 @@ public class BattleFrame extends JFrame {
     }
 
     private void enemyTurn() {
-        if (!enemyGladiator.isAlive()) return;
+        if (!enemyGladiator.isAlive()) {
+            return;
+        }
 
-        int action = new Random().nextInt(3);
+        int roll = new Random().nextInt(10); // 0–9
+        int action;
+        if (roll <= 5) {
+            action = 0;   // Attack 0–5  (60%)
+        } else if (roll <= 7) {
+            action = 1;   // Guard 6–7  (20%)
+        } else {
+            action = 2;   // Taunt 8–9  (20%)
+        } // weighted so attack has priority over guarding or taunting
+
         switch (action) {
             case 0 -> { // Attack
                 int damage = playerGladiator.isBlocking()
@@ -173,7 +201,7 @@ public class BattleFrame extends JFrame {
                 battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "GUARD");
             }
 
-            case 2 -> { // Taunt (debuffs player)
+            case 2 -> { // Taunt (debuffs player def and atk)
                 appendLog(enemyGladiator.getName() + " taunts you! \n");
                 if (new Random().nextInt(10) >= 3) {
                     int atkLoss = (int) (playerGladiator.getAttack() * 0.2);
@@ -183,7 +211,7 @@ public class BattleFrame extends JFrame {
                     appendLog("You lose -" + atkLoss + " ATK and -" + defLoss + " DEF permanently!\n");
                     battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "TAUNT SUCCESS");
                 } else {
-                    appendLog("You shrug off the insult.\n");
+                    appendLog("You shrug off the taunt!\n");
                     battleLogDAO.addBattleLog(enemyGladiator.getName(), playerGladiator.getName(), "TAUNT FAIL");
                 }
             }
@@ -202,11 +230,13 @@ public class BattleFrame extends JFrame {
             playerDAO.updateScore(playerGladiator.getName(), newScore);
             JOptionPane.showMessageDialog(this, "You stand victorious! Your score is: " + newScore);
             dispose();
+            new MainMenuFrame().setVisible(true); // battle frame -> menu
         } else if (!playerGladiator.isAlive()) {
             appendLog("\n You were defeated by " + enemyGladiator.getName() + "!\n");
             battleLogDAO.addBattleLog(playerGladiator.getName(), enemyGladiator.getName(), "LOSS");
             JOptionPane.showMessageDialog(this, "Defeat!");
             dispose();
+            new MainMenuFrame().setVisible(true); // battle frame -> menu
         }
     }
 
