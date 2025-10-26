@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ARENAv2" basedir="." default="default">
+    <description>
+        Custom Ant overrides for ARENAv2 build.
+        This file supplements build-impl.xml.
+    </description>
+
+    <import file="nbproject/build-impl.xml"/>
+
+    <!-- JUnit 5 test runner -->
+    <target name="test-junit5">
+        <property name="lib.dir" location="lib"/>
+        <property name="junit.jar" location="${lib.dir}/junit-platform-console-standalone-1.10.3.jar"/>
+        <mkdir dir="build/test-results" />
+        <echo message="Running JUnit 5 tests via ConsoleLauncher..."/>
+        
+        <java fork="true" jar="${junit.jar}">
+            <arg value="execute"/>
+            <arg value="--scan-class-path"/>
+            <arg value="--classpath=build/classes;build/test/classes"/>
+            <arg value="--details=tree"/>
+            <arg value="--reports-dir=build/test-results"/>
+            <!-- Exclude the Derby tests -->
+            <arg value="--exclude-package=ArenaGame.database"/>
+        </java>
+    </target>
+</project>
