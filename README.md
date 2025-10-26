@@ -9,4 +9,4 @@ Running the game.
 
 Option 1: GUI Version: Run -> ArenaGame.ui.MainMenuFrame
 
-Option 1: CLI Version: Run -> ArenaGame.Arena
+Option 2: CLI Version: Run -> ArenaGame.Arena
