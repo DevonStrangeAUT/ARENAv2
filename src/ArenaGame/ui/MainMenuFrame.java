@@ -33,6 +33,7 @@ public class MainMenuFrame extends JFrame {
         this.gladiatorDAO = new GladiatorDAO();
         this.battleLogDAO = new BattleLogDAO();
         
+        setIconImage(new ImageIcon("assets/icon_arena.png").getImage());
         setTitle("ARENAv2 - Main Menu Frame");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 800);

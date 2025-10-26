@@ -148,20 +148,19 @@ public class BattleFrame extends JFrame {
     *gradient background for battle ambience.
     */
     private static class GradientPanel extends JPanel {
-   @Override
-        protected void paintComponent(Graphics g) {
-            // Paint gradient background first
-            Graphics2D g2d = (Graphics2D) g.create();
-            int w = getWidth(), h = getHeight();
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        int w = getWidth(), h = getHeight();
 
-            GradientPaint gp = new GradientPaint(0, 0, new Color(50, 30, 40),
-                    0, h, new Color(100, 20, 20));
-            g2d.setPaint(gp);
-            g2d.fillRect(0, 0, w, h);
-            g2d.dispose();
+        // Paint gradient FIRST (background)
+        GradientPaint gp = new GradientPaint(0, 0, new Color(50, 30, 40),0, h, new Color(100, 20, 20));
+        g2d.setPaint(gp);
+        g2d.fillRect(0, 0, w, h);
 
-            // Then paint children
-            super.paintComponent(g);
+        // THEN paint children on top
+        g2d.dispose();
+        super.paintComponent(g);
         }
     }
 
@@ -407,18 +406,5 @@ public class BattleFrame extends JFrame {
             new MainMenuFrame().setVisible(true);
         }
     }    
-    
-        private static class GradientPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            int w = getWidth(), h = getHeight();
-            Color top = new Color(50, 30, 40);
-            Color bottom = new Color(100, 20, 20);
-            GradientPaint gp = new GradientPaint(0, 0, top, 0, h, bottom);
-            g2d.setPaint(gp);
-            g2d.fillRect(0, 0, w, h);
-        }
-    }
+
 }
