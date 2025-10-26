@@ -72,9 +72,10 @@ public class BattleFrame extends JFrame {
         JPanel topPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         topPanel.setOpaque(false);
         
+        //Player and enemy stats font and colour
         playerStats = new JLabel(formatStats(playerGladiator), SwingConstants.CENTER);
         enemyStats = new JLabel(formatStats(enemyGladiator), SwingConstants.CENTER);
-
+        
         playerStats.setFont(new Font("Courier New", Font.BOLD, 22));
         enemyStats.setFont(new Font("Courier New", Font.BOLD, 22));
         playerStats.setForeground(new Color(240, 240, 255));
