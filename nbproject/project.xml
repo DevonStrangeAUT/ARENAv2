@@ -13,4 +13,13 @@
             </test-roots>
         </data>
     </configuration>
+    <target name="test-junit5">
+        <taskdef name="junitplatform"
+                 classname="org.junit.platform.console.tasks.ConsoleLauncherTask"
+                 classpathref="test.classpath" />
+        <mkdir dir="${build.test.results.dir}" />
+        <junitplatform scanClassPath="true"
+                       details="tree"
+                       reportsDir="${build.test.results.dir}" />
+    </target>
 </project>

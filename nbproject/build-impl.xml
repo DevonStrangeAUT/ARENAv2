@@ -33,6 +33,15 @@ is divided into following sections:
                 INITIALIZATION SECTION 
                 ======================
             -->
+    <target name="test-junit5">
+        <taskdef name="junitplatform"
+                 classname="org.junit.platform.console.tasks.ConsoleLauncherTask"
+                 classpathref="test.classpath" />
+        <mkdir dir="${build.test.results.dir}" />
+        <junitplatform scanClassPath="true"
+                       details="tree"
+                       reportsDir="${build.test.results.dir}" />
+    </target>
     <target name="-pre-init">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
