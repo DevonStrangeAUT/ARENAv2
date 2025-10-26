@@ -66,6 +66,7 @@ public class BattleFrame extends JFrame {
         JPanel basePanel = new GradientPanel();
         basePanel.setLayout(new BorderLayout(20, 20));
         basePanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+        basePanel.setOpaque(false);
         
         // == Stats Panel ==
         JPanel topPanel = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -82,8 +83,8 @@ public class BattleFrame extends JFrame {
         // add soft dark translucent background so they stand out    
         playerStats.setOpaque(true);
         enemyStats.setOpaque(true);
-        playerStats.setBackground(new Color(40, 40, 60, 170));
-        enemyStats.setBackground(new Color(80, 30, 30, 170));
+        playerStats.setBackground(new Color(40, 40, 60));
+        enemyStats.setBackground(new Color(80, 30, 30));
         playerStats.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         enemyStats.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         
@@ -97,16 +98,17 @@ public class BattleFrame extends JFrame {
         battleLogArea.setWrapStyleWord(true);
         battleLogArea.setFont(new Font("Consolas", Font.PLAIN, 16));
         battleLogArea.setForeground(Color.WHITE);
-        battleLogArea.setBackground(new Color(10, 10, 10, 180));
+        battleLogArea.setBackground(new Color(10, 10, 10));
         battleLogArea.setMargin(new Insets(14, 14, 14, 14));
         battleLogArea.setCaretColor(Color.WHITE);
         battleLogArea.setSelectionColor(new Color(255, 255, 255, 60));
         battleLogArea.setOpaque(true);
         
         JScrollPane scrollPane = new JScrollPane(battleLogArea);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(true);
+        scrollPane.getViewport().setOpaque(true);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 60, 60), 3, true));
+        scrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
 
         // == Bottom Panel (Action Buttons) ==
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -136,7 +138,6 @@ public class BattleFrame extends JFrame {
         basePanel.add(topPanel, BorderLayout.NORTH);
         basePanel.add(scrollPane, BorderLayout.CENTER);
         basePanel.add(buttonPanel, BorderLayout.SOUTH);
-        
         setContentPane(basePanel);
 
         appendLog(enemyGladiator.getName() + " stands to face you in the ARENA!\n");
@@ -148,19 +149,24 @@ public class BattleFrame extends JFrame {
     *gradient background for battle ambience.
     */
     private static class GradientPanel extends JPanel {
+        public GradientPanel() {
+            setDoubleBuffered(true);
+            setOpaque(true);
+        }
     @Override
     protected void paintComponent(Graphics g) {
+        
+        super.paintChildren(g);
+        
         Graphics2D g2d = (Graphics2D) g.create();
         int w = getWidth(), h = getHeight();
-
-        // Paint gradient FIRST (background)
-        GradientPaint gp = new GradientPaint(0, 0, new Color(50, 30, 40),0, h, new Color(100, 20, 20));
+        GradientPaint gp = new GradientPaint(
+                0, 0, new Color(50, 30, 40),
+                0, h, new Color(100, 20, 20)
+        );
         g2d.setPaint(gp);
-        g2d.fillRect(0, 0, w, h);
+        g2d.fillRect(0, 0, w, h);        
 
-        // THEN paint children on top
-        g2d.dispose();
-        super.paintComponent(g);
         }
     }
 
